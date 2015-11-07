@@ -2,8 +2,9 @@
   (:require [goog.dom :as gdom]
             [om.next :as om :refer-macros [defui]]
             [om.dom :as dom]
+            [app.parsing.counter]
             [app.reconciler :refer [reconciler]]
-            [app.parsing.counter]))
+            [app.components.counter :refer [counter]]))
 
 (defui App
   static om/IQuery
@@ -13,11 +14,9 @@
   (render [this]
     (dom/div #js {:className "app"}
       (dom/h1 #js {:className "title"} "Hello!")
-      (dom/p nil
-        (dom/button #js {:onClick #(om/transact! this
-                                                 `[(app/increment-counter)])}
-          "Click me!"))
-      (dom/p nil "Clicked " (:app/counter (om/props this)) " times"))))
+      (counter {:value (:app/counter (om/props this))
+                :increment-fn
+                #(om/transact! this `[(app/increment-counter)])}))))
 
 (defn run []
   (om/add-root! reconciler App (gdom/getElement "app")))
